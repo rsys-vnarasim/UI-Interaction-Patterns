@@ -621,50 +621,64 @@
     <div class="modal-backdrop" id="grouping-modal">
         <div class="modal wide">
             <div class="modal-header">
-                <h3 class="modal-title">Edit Port Details (Grouped Layout)</h3>
+                <h3 class="modal-title">Edit Port Details (Enhanced Grouped Layout)</h3>
                 <button class="close-btn" data-close="grouping-modal">&times;</button>
             </div>
             
             <div class="modal-body">
                 <form id="grouping-form" class="two-column-form">
-                    <!-- Left column: Mandatory Fields -->
+                    <!-- Left Column: Mandatory Fields (both default and user) -->
                     <div>
-                        <h4 style="margin-bottom: 15px; border-bottom: 2px solid #4285f4; padding-bottom: 5px; color: #4285f4;">Mandatory Fields</h4>
-                        
-                        <div class="form-group">
-                            <label class="required">ID</label>
-                            <input type="text" class="form-control" name="id" readonly>
+                        <!-- Mandatory Default Fields -->
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="margin-bottom: 15px; border-bottom: 2px solid #9C27B0; padding-bottom: 5px; color: #9C27B0;">
+                                Mandatory Default Fields
+                            </h4>
+                            
+                            <div class="form-group">
+                                <label class="required">ID</label>
+                                <input type="text" class="form-control" name="id" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="required">Display ID</label>
+                                <input type="text" class="form-control" name="displayId" required>
+                            </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label class="required">Name</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="required">Port</label>
-                            <input type="text" class="form-control" name="port" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="required">Display ID</label>
-                            <input type="text" class="form-control" name="displayId" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="required">Port Direction</label>
-                            <select class="form-control" name="portDirection" required>
-                                <option value="">Select an option</option>
-                                <option value="inbound">Inbound</option>
-                                <option value="outbound">Outbound</option>
-                                <option value="bidirectional">Bidirectional</option>
-                            </select>
+                        <!-- Mandatory User Updated Fields -->
+                        <div>
+                            <h4 style="margin-bottom: 15px; border-bottom: 2px solid #4285f4; padding-bottom: 5px; color: #4285f4;">
+                                Mandatory User Fields
+                            </h4>
+                            
+                            <div class="form-group">
+                                <label class="required">Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="required">Port</label>
+                                <input type="text" class="form-control" name="port" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="required">Port Direction</label>
+                                <select class="form-control" name="portDirection" required>
+                                    <option value="">Select an option</option>
+                                    <option value="inbound">Inbound</option>
+                                    <option value="outbound">Outbound</option>
+                                    <option value="bidirectional">Bidirectional</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Right column: Optional Fields -->
+                    <!-- Right Column: Optional Fields -->
                     <div>
-                        <h4 style="margin-bottom: 15px; border-bottom: 2px solid #9e9e9e; padding-bottom: 5px; color: #616161;">Optional Fields</h4>
+                        <h4 style="margin-bottom: 15px; border-bottom: 2px solid #9e9e9e; padding-bottom: 5px; color: #616161;">
+                            Optional Fields
+                        </h4>
                         
                         <div class="form-group">
                             <label>Description</label>
