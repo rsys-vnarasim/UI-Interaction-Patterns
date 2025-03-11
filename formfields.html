@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMS Form Improvements</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        /* Main Tabs Styles */
+        .main-tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 25px;
+        }
+
+        .main-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s;
+            margin-right: 5px;
+        }
+
+        .main-tab.active {
+            border-bottom-color: #4285f4;
+            color: #4285f4;
+        }
+
+        .main-tab-content {
+            display: none;
+        }
+
+        .main-tab-content.active {
+            display: block;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            color: #555;
+        }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* Base modal style */
+        .modal {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: auto;
+            min-width: 500px;
+            max-width: 90%;
+            max-height: 70vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Larger modals for two-column and grouped layouts */
+        .modal.wide {
+            min-width: 800px;
+            max-height: 91vh; /* 70vh + 30% */
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Form Styles */
+        .form-container {
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #4285f4;
+            outline: none;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .required::after {
+            content: ' *';
+            color: #e53935;
+        }
+
+        /* Two Column Layout */
+        .two-column-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* Forms Footer */
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #4285f4;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4285f4;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <h1 style="margin-bottom: 20px;">RMS UX Improvements</h1>
+    
+    <!-- Main Tabs for Different UX Approaches -->
+    <div class="main-tabs">
+        <button class="main-tab active" data-main-tab="current">Current</button>
+        <button class="main-tab" data-main-tab="columns">Additional Columns</button>
+        <button class="main-tab" data-main-tab="grouping">Mandatory-Optional Grouping</button>
+        <button class="main-tab" data-main-tab="toggle">Toggle Optional</button>
+    </div>
+    
+    <!-- Tab 1: Current -->
+    <div class="main-tab-content active" id="current-tab">
+        <h2>Current Layout</h2>
+        <p style="margin-bottom: 20px;">Standard vertical form layout with all fields in a single column.</p>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Port</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body" data-table="current">
+                    <!-- Table rows will be added dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Tab 2: Additional Columns -->
+    <div class="main-tab-content" id="columns-tab">
+        <h2>Additional Columns Layout</h2>
+        <p style="margin-bottom: 20px;">Two-column form layout for better space utilization.</p>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Port</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body" data-table="columns">
+                    <!-- Table rows will be added dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Tab 3: Mandatory-Optional Grouping -->
+    <div class="main-tab-content" id="grouping-tab">
+        <h2>Mandatory-Optional Grouping Layout</h2>
+        <p style="margin-bottom: 20px;">Fields grouped by mandatory and optional status for better focus.</p>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Port</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body" data-table="grouping">
+                    <!-- Table rows will be added dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Tab 4: Toggle Optional -->
+    <div class="main-tab-content" id="toggle-tab">
+        <h2>Toggle Optional Fields Layout</h2>
+        <p style="margin-bottom: 20px;">Standard layout with toggle to hide/disable optional fields.</p>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Port</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body" data-table="toggle">
+                    <!-- Table rows will be added dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal for Current Layout -->
+    <div class="modal-backdrop" id="current-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Port Details</h3>
+                <button class="close-btn" data-close="current-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="current-form">
+                    <div class="form-group">
+                        <label class="required">ID</label>
+                        <input type="text" class="form-control" name="id" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Port</label>
+                        <input type="text" class="form-control" name="port" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Display ID</label>
+                        <input type="text" class="form-control" name="displayId" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Port Direction</label>
+                        <select class="form-control" name="portDirection" required>
+                            <option value="">Select an option</option>
+                            <option value="inbound">Inbound</option>
+                            <option value="outbound">Outbound</option>
+                            <option value="bidirectional">Bidirectional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>UNI Port Type</label>
+                        <select class="form-control" name="uniPortType">
+                            <option value="">Select an option</option>
+                            <option value="type1">Type 1</option>
+                            <option value="type2">Type 2</option>
+                            <option value="type3">Type 3</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <input type="text" class="form-control" name="capacity">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Capacity Type</label>
+                        <select class="form-control" name="capacityType">
+                            <option value="">Select an option</option>
+                            <option value="mbps">Mbps</option>
+                            <option value="gbps">Gbps</option>
+                            <option value="tbps">Tbps</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Inventory System ID</label>
+                        <input type="text" class="form-control" name="inventorySystemId">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>MAC Limit</label>
+                        <input type="text" class="form-control" name="macLimit">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Power Over Ethernet</label>
+                        <select class="form-control" name="powerOverEthernet">
+                            <option value="">Select an option</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Maximum Frame Size</label>
+                        <input type="text" class="form-control" name="maximumFrameSize">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-close="current-modal">Cancel</button>
+                <button class="btn btn-primary" data-save="current-modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Additional Columns Layout -->
+    <div class="modal-backdrop" id="columns-modal">
+        <div class="modal wide">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Port Details (Two-Column Layout)</h3>
+                <button class="close-btn" data-close="columns-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="columns-form" class="two-column-form">
+                    <div class="form-group">
+                        <label class="required">ID</label>
+                        <input type="text" class="form-control" name="id" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Capacity Type</label>
+                        <select class="form-control" name="capacityType">
+                            <option value="">Select an option</option>
+                            <option value="mbps">Mbps</option>
+                            <option value="gbps">Gbps</option>
+                            <option value="tbps">Tbps</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Inventory System ID</label>
+                        <input type="text" class="form-control" name="inventorySystemId">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>MAC Limit</label>
+                        <input type="text" class="form-control" name="macLimit">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Port</label>
+                        <input type="text" class="form-control" name="port" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Power Over Ethernet</label>
+                        <select class="form-control" name="powerOverEthernet">
+                            <option value="">Select an option</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Display ID</label>
+                        <input type="text" class="form-control" name="displayId" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Maximum Frame Size</label>
+                        <input type="text" class="form-control" name="maximumFrameSize">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Port Direction</label>
+                        <select class="form-control" name="portDirection" required>
+                            <option value="">Select an option</option>
+                            <option value="inbound">Inbound</option>
+                            <option value="outbound">Outbound</option>
+                            <option value="bidirectional">Bidirectional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>UNI Port Type</label>
+                        <select class="form-control" name="uniPortType">
+                            <option value="">Select an option</option>
+                            <option value="type1">Type 1</option>
+                            <option value="type2">Type 2</option>
+                            <option value="type3">Type 3</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <input type="text" class="form-control" name="capacity">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-close="columns-modal">Cancel</button>
+                <button class="btn btn-primary" data-save="columns-modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Mandatory-Optional Grouping Layout -->
+    <div class="modal-backdrop" id="grouping-modal">
+        <div class="modal wide">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Port Details (Grouped Layout)</h3>
+                <button class="close-btn" data-close="grouping-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="grouping-form" class="two-column-form">
+                    <!-- Left column: Mandatory Fields -->
+                    <div>
+                        <h4 style="margin-bottom: 15px; border-bottom: 2px solid #4285f4; padding-bottom: 5px; color: #4285f4;">Mandatory Fields</h4>
+                        
+                        <div class="form-group">
+                            <label class="required">ID</label>
+                            <input type="text" class="form-control" name="id" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="required">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="required">Port</label>
+                            <input type="text" class="form-control" name="port" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="required">Display ID</label>
+                            <input type="text" class="form-control" name="displayId" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="required">Port Direction</label>
+                            <select class="form-control" name="portDirection" required>
+                                <option value="">Select an option</option>
+                                <option value="inbound">Inbound</option>
+                                <option value="outbound">Outbound</option>
+                                <option value="bidirectional">Bidirectional</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Right column: Optional Fields -->
+                    <div>
+                        <h4 style="margin-bottom: 15px; border-bottom: 2px solid #9e9e9e; padding-bottom: 5px; color: #616161;">Optional Fields</h4>
+                        
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" name="description"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>UNI Port Type</label>
+                            <select class="form-control" name="uniPortType">
+                                <option value="">Select an option</option>
+                                <option value="type1">Type 1</option>
+                                <option value="type2">Type 2</option>
+                                <option value="type3">Type 3</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Capacity</label>
+                            <input type="text" class="form-control" name="capacity">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Capacity Type</label>
+                            <select class="form-control" name="capacityType">
+                                <option value="">Select an option</option>
+                                <option value="mbps">Mbps</option>
+                                <option value="gbps">Gbps</option>
+                                <option value="tbps">Tbps</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Inventory System ID</label>
+                            <input type="text" class="form-control" name="inventorySystemId">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>MAC Limit</label>
+                            <input type="text" class="form-control" name="macLimit">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Power Over Ethernet</label>
+                            <select class="form-control" name="powerOverEthernet">
+                                <option value="">Select an option</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="auto">Auto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Maximum Frame Size</label>
+                            <input type="text" class="form-control" name="maximumFrameSize">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-close="grouping-modal">Cancel</button>
+                <button class="btn btn-primary" data-save="grouping-modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Toggle Optional Layout -->
+    <div class="modal-backdrop" id="toggle-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Port Details (Optional Toggle)</h3>
+                <button class="close-btn" data-close="toggle-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="toggle-container">
+                    <span class="toggle-label">Skip Optional Fields</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="skip-optional">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <form id="toggle-form">
+                    <div class="form-group">
+                        <label class="required">ID</label>
+                        <input type="text" class="form-control" name="id" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Port</label>
+                        <input type="text" class="form-control" name="port" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Display ID</label>
+                        <input type="text" class="form-control" name="displayId" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Port Direction</label>
+                        <select class="form-control" name="portDirection" required>
+                            <option value="">Select an option</option>
+                            <option value="inbound">Inbound</option>
+                            <option value="outbound">Outbound</option>
+                            <option value="bidirectional">Bidirectional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>UNI Port Type</label>
+                        <select class="form-control" name="uniPortType">
+                            <option value="">Select an option</option>
+                            <option value="type1">Type 1</option>
+                            <option value="type2">Type 2</option>
+                            <option value="type3">Type 3</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>Capacity</label>
+                        <input type="text" class="form-control" name="capacity">
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>Capacity Type</label>
+                        <select class="form-control" name="capacityType">
+                            <option value="">Select an option</option>
+                            <option value="mbps">Mbps</option>
+                            <option value="gbps">Gbps</option>
+                            <option value="tbps">Tbps</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>Inventory System ID</label>
+                        <input type="text" class="form-control" name="inventorySystemId">
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>MAC Limit</label>
+                        <input type="text" class="form-control" name="macLimit">
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>Power Over Ethernet</label>
+                        <select class="form-control" name="powerOverEthernet">
+                            <option value="">Select an option</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label>Maximum Frame Size</label>
+                        <input type="text" class="form-control" name="maximumFrameSize">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-close="toggle-modal">Cancel</button>
+                <button class="btn btn-primary" data-save="toggle-modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate dummy data for the tables
+        const dummyData = [];
+        for (let i = 1; i <= 10; i++) {
+            dummyData.push({
+                id: `uuid-${Math.random().toString(36).substring(2, 10)}`,
+                name: `Port ${i}`,
+                description: `Description for Port ${i}`,
+                port: `Port-${i}`,
+                displayId: `DISP-${i}`,
+                portDirection: ['inbound', 'outbound', 'bidirectional'][Math.floor(Math.random() * 3)],
+                uniPortType: [`type${Math.floor(Math.random() * 3) + 1}`],
+                capacity: Math.floor(Math.random() * 1000),
+                capacityType: ['mbps', 'gbps', 'tbps'][Math.floor(Math.random() * 3)],
+                inventorySystemId: `INV-${Math.floor(Math.random() * 1000)}`,
+                macLimit: Math.floor(Math.random() * 100),
+                powerOverEthernet: ['yes', 'no', 'auto'][Math.floor(Math.random() * 3)],
+                maximumFrameSize: Math.floor(Math.random() * 9000)
+            });
+        }
+
+        // Populate all tables with dummy data
+        const tableBodies = document.querySelectorAll('.table-body');
+        tableBodies.forEach(tableBody => {
+            tableBody.innerHTML = ''; // Clear existing rows
+            dummyData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${item.description}</td>
+                    <td>${item.port}</td>
+                    <td>
+                        <button class="action-btn" data-id="${item.id}" data-modal="${tableBody.getAttribute('data-table')}-modal">&#8942;</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        });
+
+        // Main tab switching functionality
+        const mainTabs = document.querySelectorAll('.main-tab');
+        const mainTabContents = document.querySelectorAll('.main-tab-content');
+        
+        mainTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-main-tab');
+                
+                // Update active tab
+                mainTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding tab content
+                mainTabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Modal functionality
+        const actionBtns = document.querySelectorAll('.action-btn');
+        
+        // Open modal when action button is clicked
+        actionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const modalId = btn.getAttribute('data-modal');
+                const modal = document.getElementById(modalId);
+                const item = dummyData.find(x => x.id === id);
+                
+                // Fill form with data
+                const form = modal.querySelector('form');
+                Object.keys(item).forEach(key => {
+                    const elements = form.querySelectorAll(`[name="${key}"]`);
+                    elements.forEach(el => {
+                        if (el.type === 'checkbox') {
+                            el.checked = item[key];
+                        } else {
+                            el.value = item[key];
+                        }
+                    });
+                });
+                
+                modal.style.display = 'flex';
+            });
+        });
+        
+        // Close modal functionality
+        const closeBtns = document.querySelectorAll('[data-close]');
+        
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modalId = btn.getAttribute('data-close');
+                document.getElementById(modalId).style.display = 'none';
+            });
+        });
+        
+        // Close modal if clicked outside
+        const modals = document.querySelectorAll('.modal-backdrop');
+        
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Save button functionality
+        const saveBtns = document.querySelectorAll('[data-save]');
+        
+        saveBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modalId = btn.getAttribute('data-save');
+                
+                // Here you would typically save the form data
+                alert('Changes saved successfully!');
+                
+                document.getElementById(modalId).style.display = 'none';
+            });
+        });
+        
+        // Toggle optional fields functionality
+        const skipOptionalToggle = document.getElementById('skip-optional');
+        const optionalFields = document.querySelectorAll('#toggle-form .optional .form-control');
+        
+        skipOptionalToggle.addEventListener('change', () => {
+            if (skipOptionalToggle.checked) {
+                // Disable optional fields
+                optionalFields.forEach(field => {
+                    field.disabled = true;
+                    field.parentElement.style.opacity = '0.5';
+                });
+            } else {
+                // Enable optional fields
+                optionalFields.forEach(field => {
+                    field.disabled = false;
+                    field.parentElement.style.opacity = '1';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
